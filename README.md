@@ -1,1 +1,1 @@
-# diagnostico-chakras
+index.html
