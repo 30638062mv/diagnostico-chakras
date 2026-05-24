@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Chakras · Male · @mv.terapiasholisticas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0a1e;color:#f0eeff;min-height:100vh}
+.wrap{padding:1.5rem 1rem;max-width:560px;margin:0 auto}
+.screen{display:none}
+.screen.active{display:block}
+.q-counter{font-size:12px;color:#9b8ecf;margin-bottom:6px}
+.q-text{font-size:17px;font-weight:500;color:#f0eeff;line-height:1.5;margin-bottom:1.2rem}
+.progress-bar{height:4px;background:#1e1640;border-radius:4px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:#7F77DD;border-radius:4px;transition:width 0.3s}
+.opt-btn{display:block;width:100%;text-align:left;padding:11px 14px;margin-bottom:8px;border-radius:10px;border:0.5px solid #2e2560;background:#1a1440;color:#e0d8ff;font-size:13px;cursor:pointer;transition:all 0.15s;line-height:1.5}
+.opt-btn:hover{background:#2a1f60;border-color:#7F77DD}
+.opt-btn.selected{background:#2d2580;border-color:#7F77DD;color:#fff}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:1rem}
+.btn{padding:9px 20px;border-radius:10px;border:0.5px solid #2e2560;background:transparent;color:#c4baff;font-size:13px;cursor:pointer}
+.btn-primary{background:#7F77DD;border-color:#7F77DD;color:#fff}
+.btn:disabled{opacity:0.35;cursor:not-allowed}
+.chakra-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.chakra-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.chakra-label{font-size:13px;font-weight:500;color:#f0eeff;width:130px;flex-shrink:0}
+.bar-track{flex:1;height:8px;background:#1e1640;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.8s}
+.bar-pct{font-size:12px;color:#9b8ecf;width:32px;text-align:right;flex-shrink:0}
+.result-card{background:#1a1440;border-radius:12px;padding:1rem;margin-bottom:10px;border:0.5px solid #2e2560}
+.result-card h3{font-size:14px;font-weight:500;color:#f0eeff;margin-bottom:4px}
+.result-card p{font-size:12px;color:#9b8ecf;line-height:1.6}
+.tag{display:inline-block;font-size:11px;font-weight:500;padding:2px 9px;border-radius:12px;margin-bottom:8px}
+.cta-box{border-radius:14px;padding:1.3rem;margin-top:1rem;border:0.5px solid #7F77DD;background:#1a1440}
+.cta-box h3{font-size:16px;font-weight:500;color:#c4baff;margin-bottom:8px}
+.cta-box p{font-size:13px;color:#9b8ecf;line-height:1.7;margin-bottom:8px}
+.cta-detail{font-size:12px;color:#9b8ecf;line-height:1.9;margin-bottom:10px}
+.cta-item{padding-left:18px;position:relative}
+.cta-item::before{content:"✨";position:absolute;left:0}
+.intro-emoji{font-size:48px;text-align:center;margin-bottom:1rem;margin-top:1rem}
+.intro-title{font-size:22px;font-weight:500;color:#f0eeff;text-align:center;margin-bottom:10px}
+.intro-sub{font-size:14px;color:#9b8ecf;text-align:center;line-height:1.7;margin-bottom:1.8rem}
+.divider{border:none;border-top:0.5px solid #2e2560;margin:1rem 0}
+.mes-badge{display:inline-block;background:#2d2580;color:#c4baff;font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;margin-bottom:10px}
+.wa-btn{display:block;width:100%;padding:13px;border-radius:10px;background:#25D366;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:8px;letter-spacing:0.01em}
+.result-title{font-size:17px;font-weight:500;color:#f0eeff;margin-bottom:4px}
+.result-sub{font-size:12px;color:#9b8ecf;margin-bottom:1.2rem}
+.section-label{font-size:13px;font-weight:500;color:#f0eeff;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- PANTALLA INTRO -->
+<div class="screen active" id="s-intro">
+  <div class="intro-emoji">🌀</div>
+  <div class="intro-title">¿Cómo está tu energía hoy?</div>
+  <div class="intro-sub">Respondé 14 preguntas cortas y descubrí qué chakras están necesitando atención. Sin vueltas, sin tecnicismos. Solo prestale atención a lo que sentís.</div>
+  <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px" onclick="startQuiz()">Empezar el diagnóstico</button>
+  <div style="text-align:center;margin-top:12px;font-size:12px;color:#6b5fa0">con amor, Male · @mv.terapiasholisticas</div>
+</div>
+
+<!-- PANTALLA PREGUNTAS -->
+<div class="screen" id="s-quiz">
+  <div class="q-counter" id="q-counter">Pregunta 1 de 14</div>
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:7%"></div></div>
+  <div class="q-text" id="q-text"></div>
+  <div id="q-opts"></div>
+  <div class="nav-row">
+    <button class="btn" id="btn-prev" onclick="prev()">Anterior</button>
+    <button class="btn btn-primary" id="btn-next" onclick="next()" disabled>Siguiente</button>
+  </div>
+</div>
+
+<!-- PANTALLA RESULTADO -->
+<div class="screen" id="s-result">
+  <div class="result-title">Tu diagnóstico energético 🌸</div>
+  <div class="result-sub">con amor, Male · @mv.terapiasholisticas</div>
+  <div id="bars"></div>
+  <div class="divider"></div>
+  <div class="section-label">Las energías que más atención necesitan:</div>
+  <div id="detail-cards"></div>
+  <div class="cta-box">
+    <div class="mes-badge">🌀 Se abre una vez por mes</div>
+    <h3>Reto de 15 días para equilibrar tu energía</h3>
+    <p>Los lugares son limitados. Si algo de lo que apareció acá resonó con vos, este reto es para vos.</p>
+    <p>Durante 15 días recibís cada día el link de acceso a tu clase directamente en tu celular, por un grupo privado de WhatsApp. Cada clase viene acompañada de una mini tarea que complementa la práctica. Y lo mejor: tenés acceso de por vida a todo el contenido.</p>
+    <div class="cta-detail">
+      <div class="cta-item">Liberá tensiones.</div>
+      <div class="cta-item">Reconectá con tu energía.</div>
+      <div class="cta-item">Redescubrí tu equilibrio.</div>
+      <div class="cta-item">Cada día, una nueva oportunidad de crecer, fluir y sentirte más presente.</div>
+    </div>
+    <p>No importa dónde estés ni cuánto tiempo tengas. No necesitás experiencia previa — si nunca hiciste yoga, este es el lugar perfecto para empezar. Este es tu momento. 💫</p>
+    <div style="margin-top:14px">
+      <a class="wa-btn" href="https://wa.me/5493875062749?text=Hola%20Male!%20Hice%20el%20diagn%C3%B3stico%20de%20chakras%20y%20quiero%20saber%20m%C3%A1s%20sobre%20el%20Reto%20y%20cu%C3%A1ndo%20arranca%20el%20pr%C3%B3ximo%20%F0%9F%8C%B8">💬 Escribime por WhatsApp para saber más</a>
+      <div style="text-align:center;font-size:11px;color:#6b5fa0;margin-top:6px">También podés escribirme por Instagram · @mv.terapiasholisticas</div>
+    </div>
+  </div>
+  <button class="btn" style="width:100%;margin-top:10px;padding:10px" onclick="restart()">Hacer el diagnóstico de nuevo</button>
+  <div style="height:2rem"></div>
+</div>
+
+</div>
+
+<script>
+const chakras=[
+  {name:"Raíz",color:"#E53E3E"},
+  {name:"Sacro",color:"#ED8936"},
+  {name:"Plexo Solar",color:"#ECC94B"},
+  {name:"Corazón",color:"#48BB78"},
+  {name:"Garganta",color:"#4299E1"},
+  {name:"Tercer Ojo",color:"#667EEA"},
+  {name:"Corona",color:"#9F7AEA"}
+];
+
+const questions=[
+  {text:"¿Hay días en que te sentís rara, sin poder explicar bien por qué?",chakra:0},
+  {text:"¿Cuando algo cambia en tu vida, lo primero que sentís es miedo?",chakra:0},
+  {text:"¿Hace tiempo que no hacés algo solo por el placer de hacerlo?",chakra:1},
+  {text:"¿Sentís que tu vida se volvió más rutina que disfrute?",chakra:1},
+  {text:"¿Antes de actuar, esperás ver qué piensan los demás?",chakra:2},
+  {text:"¿Tenés ideas o proyectos que nunca terminan de arrancar?",chakra:2},
+  {text:"¿Te cuesta recibir un elogio sin quitarle importancia?",chakra:3},
+  {text:"¿Hay alguien o algo del pasado que todavía te pesa en el pecho?",chakra:3},
+  {text:"¿Preferís guardar silencio antes que decir algo que pueda molestar?",chakra:4},
+  {text:"¿Sentís que a veces no encontrás las palabras para decir lo que sentís?",chakra:4},
+  {text:"¿Tomás decisiones desde la razón aunque algo adentro te diga otra cosa?",chakra:5},
+  {text:"¿Sentís que tu mente no para ni cuando querés descansar?",chakra:5},
+  {text:"¿Hay días en que sentís que hacés cosas pero sin saber muy bien para qué?",chakra:6},
+  {text:"¿Te cuesta encontrar un momento de silencio real, aunque sea unos minutos?",chakra:6}
+];
+
+const opts=["Nunca o casi nunca","A veces","Seguido","Casi siempre"];
+const scores=[0,1,2,3];
+let answers=new Array(14).fill(null);
+let current=0;
+
+const msgs=[
+  ["Tu energía está buscando tierra firme. Esa sensación de rareza sin explicación suele tener raíz energética y tiene solución.","Trabajo de enraizamiento, posturas de tierra y reconexión con el cuerpo."],
+  ["Algo de tu energía creativa y tu capacidad de disfrute está dormida. No es que no tengas ganas, es que la energía no está fluyendo.","Movimiento libre, conectar con el placer simple y soltar la rigidez del día a día."],
+  ["Tu centro de poder personal necesita atención. Estás dando más de lo que recibís, o esperando permiso para avanzar.","Fortalecer el cuerpo, afirmaciones de poder y trabajo de autoestima desde el movimiento."],
+  ["El corazón energético lleva algo guardado. Puede ser una herida vieja, un vínculo que pesa o simplemente que te cuesta recibir amor.","Apertura de pecho, trabajo de gratitud y práctica de amor propio desde adentro."],
+  ["Tu voz interna tiene cosas para decir que todavía no encontraron salida. Eso genera tensión energética real.","Expresión auténtica, respiración consciente y soltar el miedo a ocupar espacio."],
+  ["Tu intuición está activa pero hay mucho ruido tapándola. La razón está trabajando de más y la sabiduría interna queda silenciada.","Silencio, meditación y aprender a confiar en lo que ya sabés sin necesitar explicarlo."],
+  ["Hay una búsqueda de sentido que todavía no encontró su lugar. Esa sensación de vacío tiene respuesta energética.","Meditación profunda, conexión con algo más grande y práctica de presencia plena."]
+];
+
+const tagColors=[
+  {bg:'#3d2000',color:'#FCD34D'},
+  {bg:'#3d0000',color:'#FCA5A5'},
+  {bg:'#2d0050',color:'#D8B4FE'}
+];
+
+function startQuiz(){
+  document.getElementById('s-intro').classList.remove('active');
+  document.getElementById('s-quiz').classList.add('active');
+  renderQ();
+}
+
+function renderQ(){
+  const q=questions[current];
+  document.getElementById('q-counter').textContent=`Pregunta ${current+1} de 14`;
+  document.getElementById('progress').style.width=`${Math.round(((current+1)/14)*100)}%`;
+  document.getElementById('q-text').textContent=q.text;
+  const sel=answers[current];
+  document.getElementById('q-opts').innerHTML=opts.map((o,i)=>`<button class="opt-btn${sel===i?' selected':''}" onclick="select(${i})">${o}</button>`).join('');
+  document.getElementById('btn-prev').disabled=current===0;
+  document.getElementById('btn-next').disabled=sel===null;
+  document.getElementById('btn-next').textContent=current===13?'Ver mi diagnóstico':'Siguiente';
+}
+
+function select(i){
+  answers[current]=i;
+  document.querySelectorAll('.opt-btn').forEach((b,j)=>b.classList.toggle('selected',j===i));
+  document.getElementById('btn-next').disabled=false;
+}
+
+function next(){
+  if(answers[current]===null)return;
+  if(current===13){showResult();return;}
+  current++;renderQ();
+}
+
+function prev(){if(current>0){current--;renderQ();}}
+
+function restart(){
+  answers=new Array(14).fill(null);
+  current=0;
+  document.getElementById('s-result').classList.remove('active');
+  document.getElementById('s-intro').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showResult(){
+  const chakraScores=new Array(7).fill(0);
+  const chakraMax=new Array(7).fill(0);
+  questions.forEach((q,i)=>{
+    if(answers[i]!==null){
+      chakraScores[q.chakra]+=scores[answers[i]];
+      chakraMax[q.chakra]+=3;
+    }
+  });
+  const pcts=chakraScores.map((s,i)=>chakraMax[i]>0?Math.round((s/chakraMax[i])*100):0);
+  document.getElementById('s-quiz').classList.remove('active');
+  document.getElementById('s-result').classList.add('active');
+  window.scrollTo(0,0);
+
+  document.getElementById('bars').innerHTML=chakras.map((c,i)=>`
+    <div class="chakra-row">
+      <div class="chakra-dot" style="background:${c.color}"></div>
+      <div class="chakra-label">${c.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pcts[i]}%;background:${c.color}"></div></div>
+      <div class="bar-pct">${pcts[i]}%</div>
+    </div>`).join('');
+
+  const sorted=[...pcts.map((p,i)=>({i,p}))].sort((a,b)=>b.p-a.p).slice(0,3);
+  document.getElementById('detail-cards').innerHTML=sorted.map((s,rank)=>`
+    <div class="result-card">
+      <span class="tag" style="background:${tagColors[rank].bg};color:${tagColors[rank].color}">${rank===0?'Mayor atención':rank===1?'Segunda prioridad':'Tercer foco'}</span>
+      <h3 style="display:flex;align-items:center;gap:8px">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${chakras[s.i].color}"></span>
+        ${chakras[s.i].name} · ${s.p}% de tensión energética
+      </h3>
+      <p style="margin-bottom:6px">${msgs[s.i][0]}</p>
+      <p><strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#6b5fa0">Lo que ayuda:</strong> ${msgs[s.i][1]}</p>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
